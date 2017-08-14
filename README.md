@@ -17,3 +17,8 @@ CREATE VIEW pop_authors AS
         GROUP BY articles.author
         ORDER BY views desc) article_author
     WHERE article_author.author = authors.id;
+
+
+
+
+SELECT * FROM log WHERE to_number(substr(status, 1, 3), '999') >= 400;
