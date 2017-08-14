@@ -12,7 +12,15 @@ def query_db(view):
     return posts
 
 
-POP_ARTICLES = query_db(view='most_popular_articles')
+POP_ARTICLES = query_db(view='pop_articles')
 
 for article in POP_ARTICLES:
     print(article[0] + ' -- ' + str(article[1]) + ' views')
+
+    print('')
+
+
+POP_AUTHORS = query_db(view='pop_authors')
+
+for author in POP_AUTHORS:
+    print(author[0] + ' -- ' + str(author[1]) + ' views')
