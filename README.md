@@ -8,8 +8,9 @@ When running the python file you will be presented with the result from three di
 
 # Setup
 ## Software
-* [Python 3.6.x](https://www.python.org/downloads/)
-* [PostgreSQL 9.6.x](https://www.postgresql.org/download/)
+Make sure the software listed beneath is installed on your computer.
+[Python 3.6.x](https://www.python.org/downloads/)
+[PostgreSQL 9.6.x](https://www.postgresql.org/download/)
 
 ## Test data
 Download and unzip [newsdata.zip](https://d17h27t6h515a5.cloudfront.net/topher/2016/August/57b5f748_newsdata/newsdata.zip). 
