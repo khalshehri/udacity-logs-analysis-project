@@ -53,3 +53,27 @@ WHERE article_author.author = authors.id;
 
 ### View used for solving "On which days did more than 1% of requests lead to errors?"
 Not yet solved...
+
+# How to run the application
+
+Here's a couple of alternatives on how to run the application.
+
+## Using command prompt
+
+### cd into the project folder
+Open a command prompt and navigate to the udacity-logs-analysis-project folder
+
+### Run the application
+Type
+
+```
+python log_analysis.py
+```
+
+## Using the Python IDLE
+* File --> Open...
+* Navigate to log_analysis.py
+* Press Ok
+
+A new windows pops up, in that window:
+* Select Run --> Run Module
