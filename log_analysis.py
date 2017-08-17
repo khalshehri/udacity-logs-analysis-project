@@ -7,7 +7,6 @@ different database queries:
 3. On which days did more than 1% of requests lead to errors
 """
 import psycopg2
-from datetime import date
 
 DBNAME = "news"
 
@@ -63,6 +62,6 @@ print('\n')
 print(create_headline(
     'On which days did more than 1% of requests lead to errors?'))
 OVER_1_PERCENT_ERRORS = query_db(db_name=DBNAME, view='one_percent_errors')
-for day in OVER_1_PERCENT_ERRORS:
-    d = day[0]
-    print(get_formated_date(d) + ' -- ' + str(day[1]) + '% errors')
+for errors in OVER_1_PERCENT_ERRORS:
+    d = errors[0]
+    print(get_formated_date(d) + ' -- ' + str(errors[1]) + '% errors')
