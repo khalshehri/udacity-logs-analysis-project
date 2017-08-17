@@ -9,7 +9,9 @@ When running the python file you will be presented with the result from three di
 # Setup
 ## Software
 Make sure the software listed beneath is installed on your computer.
+
 [Python 3.6.x](https://www.python.org/downloads/)
+
 [PostgreSQL 9.6.x](https://www.postgresql.org/download/)
 
 ## Test data
