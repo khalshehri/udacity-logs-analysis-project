@@ -6,6 +6,8 @@ When running the python file you will be presented with the result from three di
 2. Who are the most popular article authors of all time?
 3. On which days did more than 1% of requests lead to errors
 
+Open output_example.txt to see a dump of the expected output after running log_analysis.py.
+
 # Setup
 ## Software
 Make sure the software listed beneath is installed on your computer.
