@@ -56,18 +56,21 @@ LEFT JOIN (
 
 -- (err / total)
 
-WITH x AS (
-    SELECT date(time) AS log_date, sum(case when status like '%404%' then 1 else 0 end) as errs
+
+WITH normal AS (
+    SELECT date(time) AS log_date, count(*) as day_logs
     from log
     group by log_date
 ),
-y AS (
-    SELECT date(time) AS log_date, count(*) as total
-    from log
-    group by log_date
+errors AS (
+    SELECT date(time) AS log_date,
+    count(time) AS day_error_logs
+    FROM log
+    WHERE to_number(substr(status, 1, 3), '999') >= 400
+    GROUP BY log_date
 ),
-z AS (
-    SELECT ((x.errs * 100.) / y.total) as percent, y.log_date as log_date
-    from y join x USING (log_date)
+calc AS (
+    SELECT ((errors.day_error_logs * 100.) / normal.day_logs) as percent, normal.log_date as log_date
+    from normal join errors USING (log_date)
 )
-SELECT z.log_date, z.percent from z WHERE (z.percent > 1);
+SELECT calc.log_date, ROUND(calc.percent::NUMERIC,1) from calc WHERE (calc.percent > 1);
