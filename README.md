@@ -52,7 +52,29 @@ WHERE article_author.author = authors.id;
 ```
 
 ### View used for solving "On which days did more than 1% of requests lead to errors?"
-Not yet solved...
+```
+CREATE VIEW one_percent_errors AS WITH
+NORMAL AS
+  (SELECT date(TIME) AS log_date,
+          COUNT(*) AS day_logs
+   FROM log
+   GROUP BY log_date), errors AS
+  (SELECT DATE(TIME) AS log_date,
+          COUNT(TIME) AS day_error_logs
+   FROM log
+   WHERE to_number(substr(status, 1, 3), '999') >= 400
+   GROUP BY log_date),
+                       calc AS
+  (SELECT ((errors.day_error_logs * 100.) / normal.day_logs) AS percent,
+          normal.log_date AS log_date
+   FROM
+   NORMAL
+   JOIN errors USING (log_date))
+SELECT calc.log_date,
+       ROUND(calc.percent::NUMERIC,1)
+FROM calc
+WHERE (calc.percent > 1);
+```
 
 # How to run the application
 

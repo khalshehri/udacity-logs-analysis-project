@@ -18,4 +18,4 @@ Markoff Chaney -- 84557 views
 ****************************************************************
 ** ON WHICH DAYS DID MORE THAN 1% OF REQUESTS LEAD TO ERRORS? **
 ****************************************************************
-Not yet implemented...
+July 17th, 2016 -- 2.3% errors

@@ -7,6 +7,7 @@ different database queries:
 3. On which days did more than 1% of requests lead to errors
 """
 import psycopg2
+from datetime import date
 
 DBNAME = "news"
 
@@ -32,6 +33,21 @@ def create_headline(text):
     return ('*' * len(text)) + '\n' + text + '\n' + ('*' * len(text))
 
 
+def get_formated_date(date_to_format):
+    """
+    Returns a formated date containg day of month suffix (th, st, nd...)
+    """
+    # Solution based on
+    # https://stackoverflow.com/questions/739241/date-ordinal-output
+    day = date_to_format.day
+    if 4 <= day <= 20 or 24 <= day <= 30:
+        suffix = 'th'
+    else:
+        suffix = ['st', 'nd', 'rd'][day % 10 - 1]
+
+    return d.strftime('%B %d' + suffix + ', %Y')
+
+
 print(create_headline('What are the most popular three articles of all time?'))
 POP_ARTICLES = query_db(db_name=DBNAME, view='pop_articles')
 for article in POP_ARTICLES:
@@ -46,4 +62,7 @@ for author in POP_AUTHORS:
 print('\n')
 print(create_headline(
     'On which days did more than 1% of requests lead to errors?'))
-print('Not yet implemented...')
+OVER_1_PERCENT_ERRORS = query_db(db_name=DBNAME, view='one_percent_errors')
+for day in OVER_1_PERCENT_ERRORS:
+    d = day[0]
+    print(get_formated_date(d) + ' -- ' + str(day[1]) + '% errors')
