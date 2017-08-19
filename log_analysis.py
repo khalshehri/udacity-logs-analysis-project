@@ -16,13 +16,13 @@ import psycopg2
 
 def print_info(database_name, queries):
     """
-    Makes a database connection and prints information based on view queries
+    Creates a database connection and prints information based on view queries
     """
     database, cursor = database_connect(database_name=database_name)
 
     for idx, query in enumerate(queries):
         print_query(cursor=cursor, query=query)
-        if idx + 1 != len(queries):
+        if idx + 1 != len(queries): # Add a line separator if not the last item
             print('\n')
 
     database_disconnect(database=database, cursor=cursor)
@@ -45,7 +45,7 @@ def database_connect(database_name):
 
 def database_disconnect(database, cursor):
     """
-    Closes cursor and database connections
+    Close cursor and database connections
     """
     if not cursor.closed:
         cursor.close()
@@ -55,7 +55,7 @@ def database_disconnect(database, cursor):
 
 def fetch_query(cursor, view):
     """
-    Opens a database connection and queries it with a pre defined view.
+    Open a database connection and queries it with a pre defined view.
     Returns all database rows from view query.
     """
     cursor.execute("SELECT * from " + view)
