@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 
 """
 This is the third project in Udacity's Full Stack Web Developer Nanodegree.
@@ -9,39 +9,58 @@ different database queries:
 3. On which days did more than 1% of requests lead to errors
 """
 import sys
+from datetime import date
+
 import psycopg2
 
-DBNAME = "news"
 
-def connect(db_name):
-    """Connect to the PostgreSQL database.  Returns a database connection."""
+def print_info(database_name, queries):
+    """
+    Makes a database connection and prints information based on view queries
+    """
+    database, cursor = database_connect(database_name=database_name)
+
+    for idx, query in enumerate(queries):
+        print_query(cursor=cursor, query=query)
+        if idx + 1 != len(queries):
+            print('\n')
+
+    database_disconnect(database=database, cursor=cursor)
+
+
+def database_connect(database_name):
+    """
+    Connect to the PostgreSQL database.
+    Returns a database connection.
+    """
     try:
-        db = psycopg2.connect(database=db_name)
-        c = db.cursor()
-        return db, c
-    except psycopg2.Error as e:
+        database = psycopg2.connect(database=database_name)
+        cursor = database.cursor()
+        return database, cursor
+    except psycopg2.Error as err:
         print("Unable to connect to database. Exiting ...")
+        print(err)
         sys.exit(1)
 
-def query_db(db_name, view):
+
+def database_disconnect(database, cursor):
+    """
+    Closes cursor and database connections
+    """
+    if not cursor.closed:
+        cursor.close()
+    if database.closed != 0:
+        database.close()
+
+
+def fetch_query(cursor, view):
     """
     Opens a database connection and queries it with a pre defined view.
+    Returns all database rows from view query.
     """
-    database, cursor = psycopg2.connect(database=db_name)
-    cursor = database.cursor()
     cursor.execute("SELECT * from " + view)
     posts = cursor.fetchall()
-    database.close()
     return posts
-
-
-def create_headline(text):
-    """
-    Creates a tacky headline witch a lot of stars surrounding it.
-    Why tacky? Because it's eye catching!
-    """
-    text = ('** ' + text + ' **').upper()
-    return ('*' * len(text)) + '\n' + text + '\n' + ('*' * len(text))
 
 
 def get_formated_date(date_to_format):
@@ -56,24 +75,66 @@ def get_formated_date(date_to_format):
     else:
         suffix = ['st', 'nd', 'rd'][day % 10 - 1]
 
-    return d.strftime('%B %d' + suffix + ', %Y')
+    return date_to_format.strftime('%B %d' + suffix + ', %Y')
 
 
-print(create_headline('What are the most popular three articles of all time?'))
-POP_ARTICLES = query_db(db_name=DBNAME, view='pop_articles')
-for article in POP_ARTICLES:
-    print(article[0] + ' -- ' + str(article[1]) + ' views')
+def print_query(cursor, query):
+    """
+    Prints query results
+    """
+    print(query.headline())
 
-print('\n')
-print(create_headline('Who are the most popular article authors of all time?'))
-POP_AUTHORS = query_db(db_name=DBNAME, view='pop_authors')
-for author in POP_AUTHORS:
-    print(author[0] + ' -- ' + str(author[1]) + ' views')
+    results = fetch_query(cursor=cursor, view=query.view)
+    for result in results:
+        title = result[0]
+        value = result[1]
 
-print('\n')
-print(create_headline(
-    'On which days did more than 1% of requests lead to errors?'))
-OVER_1_PERCENT_ERRORS = query_db(db_name=DBNAME, view='one_percent_errors')
-for errors in OVER_1_PERCENT_ERRORS:
-    d = errors[0]
-    print(get_formated_date(d) + ' -- ' + str(errors[1]) + '% errors')
+        if isinstance(title, date):
+            title = get_formated_date(title)
+
+        print("%s -- %s %s" % (title, value, query.suffix))
+
+
+class Query:
+    """
+    Creates an query object
+    """
+
+    def __init__(self, question, view, suffix):
+        self.question = question
+        self.view = view
+        self.suffix = suffix
+
+    def headline(self):
+        """
+        Creates a tacky headline witch a lot of stars surrounding it.
+        Why tacky? Because it's eye catching!
+        """
+        capitalized = self.question.upper()
+        text = "** %s **" % capitalized
+        top_and_bottom = "*" * len(text)
+        headline = "%s\n%s\n%s" % (top_and_bottom, text, top_and_bottom)
+        return headline
+
+
+if __name__ == '__main__':
+    DBNAME = "news"
+    QUERIES = [
+        Query(
+            question="What are the most popular three articles of all time?",
+            view="pop_articles",
+            suffix="views"
+        ),
+        Query(
+            question="Prints the most popular article authors of all time",
+            view="pop_authors",
+            suffix="views"
+        ),
+        Query(
+            question="On which days did more than 1% of requests " +
+            "lead to errors?",
+            view="one_percent_errors",
+            suffix="% errors"
+        )]
+
+    print_info(database_name=DBNAME, queries=QUERIES)
