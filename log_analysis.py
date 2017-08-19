@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 """
 This is the third project in Udacity's Full Stack Web Developer Nanodegree.
 When running the python file you will be presented with the result from three
@@ -6,16 +8,26 @@ different database queries:
 2. Who are the most popular article authors of all time?
 3. On which days did more than 1% of requests lead to errors
 """
+import sys
 import psycopg2
 
 DBNAME = "news"
 
+def connect(db_name):
+    """Connect to the PostgreSQL database.  Returns a database connection."""
+    try:
+        db = psycopg2.connect(database=db_name)
+        c = db.cursor()
+        return db, c
+    except psycopg2.Error as e:
+        print("Unable to connect to database. Exiting ...")
+        sys.exit(1)
 
 def query_db(db_name, view):
     """
     Opens a database connection and queries it with a pre defined view.
     """
-    database = psycopg2.connect(database=db_name)
+    database, cursor = psycopg2.connect(database=db_name)
     cursor = database.cursor()
     cursor.execute("SELECT * from " + view)
     posts = cursor.fetchall()
